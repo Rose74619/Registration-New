@@ -58,6 +58,14 @@ public class RegistrationServiceImpl implements RegistrationService{
         return registrationDtos;
     }
 
+    @Override
+    public RegistrationDto getRegistrationById(long id) {
+        Optional<Registration> byId = registrationRepository.findById(id);
+        Registration registration=byId.get();
+        RegistrationDto dto=mapToDto(registration);
+        return dto;
+    }
+
 
     Registration mapToEntity(RegistrationDto dto){
         Registration entity=new Registration();
