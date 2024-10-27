@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("api/v1/registration")
 public class RegistrationController {
@@ -33,5 +35,18 @@ public class RegistrationController {
         RegistrationDto registrationDto2=registrationService.updateRegistration(registrationDto, id);
         return new ResponseEntity<>(registrationDto2, HttpStatus.OK);
 
+    }
+
+    //http://localhost:8080/api/v1/registration?pageNo=0&pageSize=2&sortBy=name&sortDir=asc
+    //http://localhost:8080/api/v1/registration?pageNo=1&pageSize=5&sortBy=age&sortDir=desc
+    @GetMapping
+    public ResponseEntity<List<RegistrationDto>> getRegistration(
+            @RequestParam(name="pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name="pageSize", defaultValue = "2", required = false)int pageSize,
+            @RequestParam(name="sortBy", defaultValue = "name", required = false)String sortBy,
+            @RequestParam(name="sortDir", defaultValue = "name", required = false)String sortDir
+    ){
+        List<RegistrationDto> registrationDtos=registrationService.getRegistration(pageNo, pageSize,sortBy,sortDir);
+        return new ResponseEntity<>(registrationDtos, HttpStatus.OK);
     }
 }

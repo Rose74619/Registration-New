@@ -3,10 +3,16 @@ package com.apiexamples.service;
 import com.apiexamples.entity.Registration;
 import com.apiexamples.payload.RegistrationDto;
 import com.apiexamples.repository.RegistrationRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 @Service
 public class RegistrationServiceImpl implements RegistrationService{
@@ -40,6 +46,16 @@ public class RegistrationServiceImpl implements RegistrationService{
         Registration savedEntity=registrationRepository.save(registration);
         RegistrationDto dto=mapToDto(registration);
         return dto;
+    }
+
+    @Override
+    public List<RegistrationDto> getRegistration(int pageNo, int pageSize, String sortBy, String sortDir) {
+        Sort sort=sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(Sort.Direction.ASC, sortBy) : Sort.by(Sort.Direction.DESC, sortBy);
+        Pageable pageable=PageRequest.of(pageNo, pageSize, sort);
+        Page<Registration> all = registrationRepository.findAll(pageable);
+        List<Registration> registrations = all.getContent();
+        List<RegistrationDto> registrationDtos=registrations.stream().map(registration -> mapToDto(registration)).collect(Collectors.toList());
+        return registrationDtos;
     }
 
 
